@@ -6,5 +6,8 @@ edition = "2021"
 [lib]
 crate-type=["cdylib", "lib"]
 
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ['cfg(feature, values("custom-heap", "custom-panic"))'] }
+
 [dependencies]
 solana-program = "1.14.9"
