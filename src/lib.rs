@@ -1,8 +1,8 @@
+use solana_program::declare_id;
 use solana_program::{
     account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, pubkey::Pubkey,
 };
 use solana_security_txt::security_txt;
-use solana_program::declare_id;
 
 security_txt! {
     name: "Orderbook DEX",
@@ -15,10 +15,10 @@ security_txt! {
 /// Log Authority PDA - only this program can sign for it
 pub mod log_authority {
     use solana_program::pubkey::Pubkey;
-    
+
     /// Seeds used to derive the PDA
     pub const SEED: &[u8] = b"log";
-    
+
     /// Get the log authority PDA and bump
     pub fn get_log_authority(program_id: &Pubkey) -> (Pubkey, u8) {
         Pubkey::find_program_address(&[SEED], program_id)
