@@ -4,6 +4,8 @@ use solana_program::{
 };
 use solana_security_txt::security_txt;
 
+pub mod quantities;
+
 security_txt! {
     name: "Orderbook DEX",
     project_url: "https://github.com/veerbal1/orderbook",
