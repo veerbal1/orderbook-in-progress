@@ -42,6 +42,12 @@ macro_rules! basic_u64 {
                 self.inner.fmt(f)
             }
         }
+
+        impl Default for $type_name {
+            fn default() -> Self {
+                Self::ZERO
+            }
+        }
     };
 }
 
