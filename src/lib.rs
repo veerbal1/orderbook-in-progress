@@ -2,6 +2,7 @@ use solana_program::{
     account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, pubkey::Pubkey,
 };
 use solana_security_txt::security_txt;
+use solana_program::declare_id;
 
 security_txt! {
     name: "Orderbook DEX",
@@ -23,6 +24,8 @@ pub mod log_authority {
         Pubkey::find_program_address(&[SEED], program_id)
     }
 }
+
+declare_id!("rtZo6YDEfQwvywWwaEiQbpbbFFmWBbmieHgsU52LSE6");
 
 entrypoint!(process_instruction);
 pub fn process_instruction(
