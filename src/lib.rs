@@ -5,6 +5,7 @@ use solana_program::{
 use solana_security_txt::security_txt;
 
 pub mod quantities;
+pub mod state;
 
 security_txt! {
     name: "Orderbook DEX",
