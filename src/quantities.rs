@@ -96,7 +96,7 @@ basic_u64!(BaseLots);
 basic_u64!(Ticks);
 
 // ============================================
-// CONVERSION FACTOR TYPES  
+// CONVERSION FACTOR TYPES
 // ============================================
 /// Base atoms per base lot (conversion factor)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -122,3 +122,11 @@ basic_u64!(QuoteAtomsPerQuoteLot);
 basic_u64!(BaseLotsPerBaseUnit);
 // Define multiplication rules
 allow_multiply!(BaseLots, BaseAtomsPerBaseLot, QuoteLots);
+
+/// Adjusted quote lots (for fee calculations)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct AdjustedQuoteLots {
+    inner: u64,
+}
+basic_u64!(AdjustedQuoteLots);
