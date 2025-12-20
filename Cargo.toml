@@ -11,3 +11,4 @@ unexpected_cfgs = { level = "allow", check-cfg = ['cfg(feature, values("custom-h
 
 [dependencies]
 solana-program = "1.14.9"
+solana-security-txt = "1.1.0"
