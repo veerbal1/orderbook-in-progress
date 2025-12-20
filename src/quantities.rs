@@ -94,3 +94,31 @@ pub struct Ticks {
 basic_u64!(QuoteLots);
 basic_u64!(BaseLots);
 basic_u64!(Ticks);
+
+// ============================================
+// CONVERSION FACTOR TYPES  
+// ============================================
+/// Base atoms per base lot (conversion factor)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct BaseAtomsPerBaseLot {
+    inner: u64,
+}
+/// Quote atoms per quote lot (conversion factor)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct QuoteAtomsPerQuoteLot {
+    inner: u64,
+}
+/// Base lots per base unit (conversion factor)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct BaseLotsPerBaseUnit {
+    inner: u64,
+}
+// Apply macro
+basic_u64!(BaseAtomsPerBaseLot);
+basic_u64!(QuoteAtomsPerQuoteLot);
+basic_u64!(BaseLotsPerBaseUnit);
+// Define multiplication rules
+allow_multiply!(BaseLots, BaseAtomsPerBaseLot, QuoteLots);
