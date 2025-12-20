@@ -64,3 +64,33 @@ macro_rules! allow_multiply {
         }
     };
 }
+
+// ============================================
+// CORE QUANTITY TYPES
+// ============================================
+
+/// Quote lots - smallest unit of quote currency in the orderbook
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct QuoteLots {
+    inner: u64,
+}
+
+/// Base lots - smallest unit of base currency in the orderbook
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct BaseLots {
+    inner: u64,
+}
+
+/// Ticks - discrete price unit
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct Ticks {
+    inner: u64,
+}
+
+// Apply the macro to generate all methods!
+basic_u64!(QuoteLots);
+basic_u64!(BaseLots);
+basic_u64!(Ticks);
