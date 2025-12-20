@@ -1,5 +1,5 @@
 use std::fmt::Display;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Mul, Sub};
 
 pub trait WrapperU64 {
     fn new(value: u64) -> Self;
@@ -40,6 +40,26 @@ macro_rules! basic_u64 {
         impl Display for $type_name {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 self.inner.fmt(f)
+            }
+        }
+    };
+}
+
+macro_rules! allow_multiply {
+    ($type_1:ident, $type_2:ident, $type_result:ident) => {
+        // Type1 × Type2 = Result
+        impl Mul<$type_2> for $type_1 {
+            type Output = $type_result;
+            fn mul(self, other: $type_2) -> $type_result {
+                $type_result::new(self.inner * other.inner)
+            }
+        }
+
+        // Type2 × Type1 = Result (reverse order)
+        impl Mul<$type_1> for $type_2 {
+            type Output = $type_result;
+            fn mul(self, other: $type_1) -> $type_result {
+                $type_result::new(self.inner * other.inner)
             }
         }
     };
