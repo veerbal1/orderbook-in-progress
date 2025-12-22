@@ -6,7 +6,7 @@ use sokoban::{FromSlice, RedBlackTree};
 
 use crate::{
     quantities::{BaseLots, BaseLotsPerBaseUnit, QuoteLots, QuoteLotsPerBaseUnitPerTick, Ticks, WrapperU64},
-    state::{RestingOrder, Side, TraderState},
+    state::{Market, OrderId, RestingOrder, Side, TraderState},
 };
 
 #[repr(C)]
@@ -60,6 +60,12 @@ impl PartialOrd for FIFOOrderId {
 impl Ord for FIFOOrderId {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.partial_cmp(other).unwrap()
+    }
+}
+
+impl OrderId for FIFOOrderId {
+    fn price_in_ticks(&self) -> u64 {
+        self.price_in_ticks.as_u64()
     }
 }
 
@@ -194,5 +200,38 @@ const NUM_SEATS: usize,
 > FromSlice for FIFOMarket<MarketTraderId, BIDS_SIZE, ASKS_SIZE, NUM_SEATS> {
     fn new_from_slice(data: &mut [u8]) -> &mut Self {
         unsafe { &mut *(data.as_mut_ptr() as *mut Self) }
+    }
+}
+
+impl<
+    MarketTraderId: Debug + PartialOrd + Ord + Default + Copy + Clone + Zeroable + Pod + BorshDeserialize + BorshSerialize,
+    const BIDS_SIZE: usize,
+    const ASKS_SIZE: usize,
+    const NUM_SEATS: usize,
+> Market<MarketTraderId, FIFOOrderId, FIFORestingOrder> for FIFOMarket<MarketTraderId, BIDS_SIZE, ASKS_SIZE, NUM_SEATS> {
+    fn get_taker_fee_bps(&self) -> u64 {
+        self.taker_fee_bps
+    }
+
+    fn get_base_lots_per_base_unit(&self) -> BaseLotsPerBaseUnit {
+        self.base_lots_per_base_unit
+    }
+
+    fn get_tick_size(&self) -> QuoteLotsPerBaseUnitPerTick {
+        self.tick_size_in_quote_lots_per_base_unit
+    }
+
+    fn get_sequence_number(&self) -> u64 {
+        self.order_sequence_number
+    }
+
+    fn get_book(
+            &self,
+            side: Side,
+        ) -> &dyn sokoban::OrderedNodeAllocatorMap<FIFOOrderId, FIFORestingOrder> {
+        match side {
+            Side::Ask => &self.asks,
+            Side::Bid => &self.bids,
+        }
     }
 }
