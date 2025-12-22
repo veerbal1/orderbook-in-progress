@@ -12,6 +12,14 @@ impl Side {
             Side::Ask => Side::Bid,
         }
     }
+
+    pub fn from_order_sequence_number(order_sequence_number: u64) -> Self {
+        if order_sequence_number >> 63 == 1 {
+            Side::Bid
+        } else {
+            Side::Ask
+        }
+    }
 }
 
 /// What to do when a trader's order would match their own resting order
