@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 use crate::{
-    quantities::{Ticks, WrapperU64},
+    quantities::{BaseLots, Ticks, WrapperU64},
     state::Side,
 };
 
@@ -56,5 +56,65 @@ impl PartialOrd for FIFOOrderId {
 impl Ord for FIFOOrderId {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.partial_cmp(other).unwrap()
+    }
+}
+
+#[repr(C)]
+#[derive(Default, Debug, Copy, Clone)]
+pub struct FIFORestingOrder {
+    pub trader_index: u64,
+    pub num_base_lots: BaseLots,
+    pub last_valid_slot: u64,
+    pub last_valid_unix_timestamp_in_seconds: u64,
+}
+
+impl FIFORestingOrder {
+    pub fn new_default(trader_index: u64, num_base_lots: BaseLots) -> Self {
+        Self {
+            trader_index,
+            num_base_lots,
+            last_valid_slot: 0,
+            last_valid_unix_timestamp_in_seconds: 0,
+        }
+    }
+
+    pub fn new(
+        trader_index: u64,
+        num_base_lots: BaseLots,
+        last_valid_slot: u64,
+        last_valid_unix_timestamp_in_seconds: u64,
+    ) -> Self {
+        Self {
+            trader_index,
+            num_base_lots,
+            last_valid_slot,
+            last_valid_unix_timestamp_in_seconds,
+        }
+    }
+
+    pub fn new_with_last_valid_slot(
+        trader_index: u64,
+        num_base_lots: BaseLots,
+        last_valid_slot: u64,
+    ) -> Self {
+        Self {
+            trader_index,
+            num_base_lots,
+            last_valid_slot,
+            last_valid_unix_timestamp_in_seconds: 0,
+        }
+    }
+
+    pub fn new_with_last_valid_unix_timestamp(
+        trader_index: u64,
+        num_base_lots: BaseLots,
+        last_valid_unix_timestamp_in_seconds: u64,
+    ) -> Self {
+        FIFORestingOrder {
+            trader_index,
+            num_base_lots,
+            last_valid_slot: 0,
+            last_valid_unix_timestamp_in_seconds,
+        }
     }
 }
