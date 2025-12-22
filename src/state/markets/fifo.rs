@@ -2,7 +2,7 @@ use std::{cmp::Ordering, fmt::Debug};
 
 use borsh::{BorshDeserialize, BorshSerialize};
 use bytemuck::{Pod, Zeroable};
-use sokoban::RedBlackTree;
+use sokoban::{FromSlice, RedBlackTree};
 
 use crate::{
     quantities::{BaseLots, BaseLotsPerBaseUnit, QuoteLots, QuoteLotsPerBaseUnitPerTick, Ticks, WrapperU64},
@@ -184,4 +184,15 @@ pub struct FIFOMarket<
     pub bids: RedBlackTree<FIFOOrderId, FIFORestingOrder, BIDS_SIZE>,
     pub asks: RedBlackTree<FIFOOrderId, FIFORestingOrder, ASKS_SIZE>,
     pub traders: RedBlackTree<MarketTraderId, TraderState, NUM_SEATS>,
+}
+
+impl<
+MarketTraderId: Debug + PartialOrd + Ord + Default + Copy + Clone + Zeroable + Pod + BorshDeserialize + BorshSerialize,
+const BIDS_SIZE: usize,
+const ASKS_SIZE: usize,
+const NUM_SEATS: usize,
+> FromSlice for FIFOMarket<MarketTraderId, BIDS_SIZE, ASKS_SIZE, NUM_SEATS> {
+    fn new_from_slice(data: &mut [u8]) -> &mut Self {
+        unsafe { &mut *(data.as_mut_ptr() as *mut Self) }
+    }
 }
