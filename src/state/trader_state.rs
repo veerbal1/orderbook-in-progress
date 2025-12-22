@@ -1,7 +1,10 @@
+use bytemuck::{Pod, Zeroable};
+
 use crate::quantities::{BaseLots, QuoteLots};
 
 /// Tracks a trader's state in the market
-#[derive(Debug, Clone, Copy, Default)]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Default, Pod, Zeroable)]
 pub struct TraderState {
     /// Quote lots locked in open orders
     pub quote_lots_locked: QuoteLots,

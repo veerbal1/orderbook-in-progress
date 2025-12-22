@@ -1,12 +1,16 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, fmt::Debug};
+
+use borsh::{BorshDeserialize, BorshSerialize};
+use bytemuck::{Pod, Zeroable};
+use sokoban::RedBlackTree;
 
 use crate::{
-    quantities::{BaseLots, Ticks, WrapperU64},
-    state::{RestingOrder, Side},
+    quantities::{BaseLots, BaseLotsPerBaseUnit, QuoteLots, QuoteLotsPerBaseUnitPerTick, Ticks, WrapperU64},
+    state::{RestingOrder, Side, TraderState},
 };
 
 #[repr(C)]
-#[derive(Eq, PartialEq, Debug, Default, Copy, Clone)]
+#[derive(Eq, PartialEq, Debug, Default, Copy, Clone, Pod, Zeroable)]
 pub struct FIFOOrderId {
     pub price_in_ticks: Ticks,
     pub order_sequence_number: u64,
@@ -60,7 +64,7 @@ impl Ord for FIFOOrderId {
 }
 
 #[repr(C)]
-#[derive(Default, Debug, Copy, Clone)]
+#[derive(Default, Debug, Copy, Clone, Pod, Zeroable)]
 pub struct FIFORestingOrder {
     pub trader_index: u64,
     pub num_base_lots: BaseLots,
@@ -132,7 +136,7 @@ impl RestingOrder for FIFORestingOrder {
         (self.last_valid_unix_timestamp_in_seconds != 0 
          && self.last_valid_unix_timestamp_in_seconds < current_timestamp)
     }
-    
+
     fn last_valid_slot(&self) -> Option<u64> {
         if self.last_valid_slot == 0 {
             None
@@ -148,4 +152,36 @@ impl RestingOrder for FIFORestingOrder {
             Some(self.last_valid_unix_timestamp_in_seconds)
         }
     }
+}
+
+#[repr(C)]
+#[derive(Default, Copy, Clone)]
+pub struct FIFOMarket<
+    MarketTraderId: Debug
+        + PartialOrd
+        + Ord
+        + Default
+        + Copy
+        + Clone
+        + Zeroable
+        + Pod
+        + BorshDeserialize
+        + BorshSerialize,
+    const BIDS_SIZE: usize,
+    const ASKS_SIZE: usize,
+    const NUM_SEATS: usize,
+> {
+    pub _marker: core::marker::PhantomData<MarketTraderId>,
+
+    pub _padding: [u64; 32],
+    pub base_lots_per_base_unit: BaseLotsPerBaseUnit,
+    pub tick_size_in_quote_lots_per_base_unit: QuoteLotsPerBaseUnitPerTick,
+    order_sequence_number: u64,
+    pub taker_fee_bps: u64,
+    collected_quote_lot_fees: QuoteLots,
+    unclaimed_quote_lot_fees: QuoteLots,
+
+    pub bids: RedBlackTree<FIFOOrderId, FIFORestingOrder, BIDS_SIZE>,
+    pub asks: RedBlackTree<FIFOOrderId, FIFORestingOrder, ASKS_SIZE>,
+    pub traders: RedBlackTree<MarketTraderId, TraderState, NUM_SEATS>,
 }

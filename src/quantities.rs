@@ -1,6 +1,8 @@
 use std::fmt::Display;
 use std::ops::{Add, Mul, Sub};
 
+use bytemuck::{Pod, Zeroable};
+
 pub trait WrapperU64 {
     fn new(value: u64) -> Self;
     fn as_u64(&self) -> u64;
@@ -76,21 +78,21 @@ macro_rules! allow_multiply {
 // ============================================
 
 /// Quote lots - smallest unit of quote currency in the orderbook
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Pod, Zeroable)]
 #[repr(transparent)]
 pub struct QuoteLots {
     inner: u64,
 }
 
 /// Base lots - smallest unit of base currency in the orderbook
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Pod, Zeroable)]
 #[repr(transparent)]
 pub struct BaseLots {
     inner: u64,
 }
 
 /// Ticks - discrete price unit
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Pod, Zeroable)]
 #[repr(transparent)]
 pub struct Ticks {
     inner: u64,
@@ -136,3 +138,12 @@ pub struct AdjustedQuoteLots {
     inner: u64,
 }
 basic_u64!(AdjustedQuoteLots);
+
+/// Quote lots per base unit per tick (tick size)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct QuoteLotsPerBaseUnitPerTick {
+    inner: u64,
+}
+
+basic_u64!(QuoteLotsPerBaseUnitPerTick);
