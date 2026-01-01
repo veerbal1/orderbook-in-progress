@@ -1,4 +1,4 @@
-# 🔥 Orderbook DEX
+# Orderbook DEX
 
 ![Status](https://img.shields.io/badge/Status-Work%20In%20Progress-yellow)
 ![Progress](https://img.shields.io/badge/Progress-23%2F100%20Rings-blue)
@@ -11,7 +11,7 @@ A **crankless on-chain orderbook DEX** being built on Solana using **raw Solana*
 
 ---
 
-## 🎯 Why This Project?
+## Why This Project?
 
 This is a **production-grade rebuild** of the Phoenix orderbook protocol, demonstrating:
 
